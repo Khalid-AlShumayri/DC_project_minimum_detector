@@ -1,0 +1,205 @@
+% بسم الله الرحمن الرحيم  
+
+% Course Project
+%%
+clear all;
+close all;
+clc;
+
+M = 8; % number of signals
+k = 3; % number of bits per symbol
+
+% Generate random binary sequence with equal 1s and 0s   'Part b'
+Num_of_bits = 1002;
+Num_of_Symbols = Num_of_bits/k;
+
+%%
+lin_width = 1.2;
+LableFontsize = 13;
+TitleFontsize = 14;
+position = 19;
+FigureWidth = 600;
+Proportion = 1;
+res = 600;
+
+%%
+% Mapping the generated bits to construct the given constellation 'Part c'
+d1 = 1;                    % the value of d1 is not final yet
+d2 = d1*(sqrt(2)+1);       % d2 depends on d1 
+
+s1 = [d2/2, d2/2];  % 100
+s4 = [-d2/2, -d2/2];  % 001
+s2 = [-d2/2, d2/2];  % 000
+s3 = [d2/2, -d2/2];  % 101
+s5 = [d1/2, d1/2];  % 110
+s6 = [-d1/2, -d1/2];  % 010
+s7 = [-d1/2, d1/2];  % 011
+s8 = [d1/2, -d1/2];  % 111
+
+%% Loop over the different SNR
+finalSNR = 16;
+for EbN0dB = 0:2:finalSNR         % 'Part a' 
+
+    EbN0 = 10^(EbN0dB/10);
+    EsN0 = 3*EbN0;
+    Bit_error = 0;
+    Symbol_error = 0;
+    
+    sig_o = [];             % Original signal
+    %%%
+    Si_1 = [];  Si_2 = [];  Si_3 = [];  Si_4 = [];
+    Si_5 = [];  Si_6 = [];  Si_7 = [];  Si_8 = [];
+    %%%
+    K = rand(1,Num_of_bits);
+    Bit_o = round(K);
+
+    % take every k bits as one symbol (k=3)
+    for i = 1:1:Num_of_Symbols
+    %%
+        symbol = [Bit_o(1+3*(i-1)), Bit_o(2+3*(i-1)), Bit_o(3+3*(i-1))];
+        % Gray coding
+        if (symbol == [0,0,0])
+            sig_o = [sig_o;s2];
+            Si_2 = [Si_2;s2];
+
+        elseif symbol == [0,0,1]
+            sig_o = [sig_o;s3];
+            Si_3 = [Si_3;s3];
+
+        elseif symbol == [0,1,0]
+            sig_o = [sig_o;s6];
+            Si_6 = [Si_6;s6];
+
+        elseif symbol == [0,1,1]
+            sig_o = [sig_o;s7];
+            Si_7 = [Si_7;s7];
+
+        elseif symbol == [1,0,0]
+            sig_o = [sig_o;s1];
+            Si_1 = [Si_1;s1];
+
+        elseif symbol == [1,0,1]
+            sig_o = [sig_o;s4];
+            Si_4 = [Si_4;s4];
+
+        elseif symbol == [1,1,0]
+            sig_o = [sig_o;s5];
+            Si_5 = [Si_5;s5];
+
+        elseif symbol == [1,1,1]
+            sig_o = [sig_o;s8];
+            Si_8 = [Si_8;s8];
+
+        end
+    end
+
+    % Calculating the energy per symbol & Calculate the noise variance 
+
+    %Avg energy per symbol
+    Es = sum( sum(sig_o.*sig_o,2) )/Num_of_Symbols; 
+
+    % as EsN0 increase N0 decrease
+    N0 = Es/EsN0;    
+    Noise = sqrt(N0/2).*randn(size(sig_o));
+
+    % The received signal
+    Rec = sig_o + Noise;
+    Si_1 =Si_1+ Noise(randperm(size(Si_1,1)),:);  % adding noise to each class of symbols
+    Si_2 =Si_2+ Noise(randperm(size(Si_2,1)),:);
+    Si_3 =Si_3+ Noise(randperm(size(Si_3,1)),:);
+    Si_4 =Si_4+ Noise(randperm(size(Si_4,1)),:);
+    Si_5 =Si_5+ Noise(randperm(size(Si_5,1)),:);
+    Si_6 =Si_6+ Noise(randperm(size(Si_6,1)),:);
+    Si_7 =Si_7+ Noise(randperm(size(Si_7,1)),:);
+    Si_8 =Si_8+ Noise(randperm(size(Si_8,1)),:);
+
+    sig_r = []; % Received signal 
+    Bit_r = []; % Received bits
+
+    % Applying MDs
+    q=1;
+    for i=1:Num_of_Symbols
+    %%
+        e1 = sum( (Rec(i,:) - s1).*(Rec(i,:) - s1) ); % ||Rec(i) - s1||^2
+        e2 = sum( (Rec(i,:) - s2).*(Rec(i,:) - s2) ); % taking the
+        e3 = sum( (Rec(i,:) - s3).*(Rec(i,:) - s3) ); % difference than 
+        e4 = sum( (Rec(i,:) - s4).*(Rec(i,:) - s4) ); % finding the energy
+        e5 = sum( (Rec(i,:) - s5).*(Rec(i,:) - s5) ); % of the error signal
+        e6 = sum( (Rec(i,:) - s6).*(Rec(i,:) - s6) );
+        e7 = sum( (Rec(i,:) - s7).*(Rec(i,:) - s7) );
+        e8 = sum( (Rec(i,:) - s8).*(Rec(i,:) - s8) ); 
+
+        DE = [e1, e2, e3, e4, e5, e6, e7, e8];
+        [~,I] = min(DE);
+
+        if (I == 1) % 100
+            temp2 = s1;
+            Bit1 = 1; Bit2 = 0; Bit3 = 0;
+
+        elseif (I == 2) % 000
+            temp2 = s2;
+            Bit1 = 0; Bit2 = 0; Bit3 = 0;
+
+        elseif (I == 3) % 001
+            temp2 = s3;
+            Bit1 = 0; Bit2 = 0; Bit3 = 1;
+
+        elseif (I == 4) % 101
+            temp2 = s4;
+            Bit1 = 1; Bit2 = 0; Bit3 = 1;
+
+        elseif (I == 5) % 110
+            temp2 = s5;
+            Bit1 = 1; Bit2 = 1; Bit3 = 0;
+
+        elseif (I == 6) % 010
+            temp2 = s6;
+            Bit1 = 0; Bit2 = 1; Bit3 = 0;
+
+        elseif (I == 7) % 011
+            temp2 = s7;
+            Bit1 = 0; Bit2 = 1; Bit3 = 1;
+
+        elseif (I == 8) % 111
+            temp2 = s8;
+            Bit1 = 1; Bit2 = 1; Bit3 = 1;
+
+        end
+
+        sig_r = [sig_r;temp2]; % accumulating the signals
+        Bit_r = [Bit_r,Bit1,Bit2,Bit3]; % accumulating the Bits
+        q=q+3;
+    end
+    Bit_error = Bit_error + sum(xor(Bit_r,Bit_o));
+    Symbol_error = Symbol_error + nnz(sig_r - sig_o);
+
+    figure(1)
+    sz = 40;
+    scatter(Si_1(:,1),Si_1(:,2),sz,'MarkerEdgeColor',[.4 .4 0],...
+                  'MarkerFaceColor',[1 1 0]); grid on;hold on;
+    scatter(Si_2(:,1),Si_2(:,2),sz,'MarkerEdgeColor',[.4 0 .4],...
+                  'MarkerFaceColor',[1 0 1]); grid on;hold on;
+    scatter(Si_3(:,1),Si_3(:,2),sz,'MarkerEdgeColor',[.8 0 .8],...
+                  'MarkerFaceColor',[.5 0 .5]); grid on;hold on;
+    scatter(Si_4(:,1),Si_4(:,2),sz,'MarkerEdgeColor',[.8 .8 0],...
+                  'MarkerFaceColor',[.4 .5 0]); grid on;hold on;
+    scatter(Si_5(:,1),Si_5(:,2),sz,'MarkerEdgeColor',[0 .5 .4],...
+                  'MarkerFaceColor',[0 1 1]); grid on;hold on;
+    scatter(Si_6(:,1),Si_6(:,2),sz,'MarkerEdgeColor',[0 .8 .8],...
+                  'MarkerFaceColor',[0 .5 .4]); grid on;hold on;
+    scatter(Si_7(:,1),Si_7(:,2),sz,'MarkerEdgeColor',[.2 .2 .2],...
+                  'MarkerFaceColor',[.7 .7 .7]); grid on;hold on;          
+    scatter(Si_8(:,1),Si_8(:,2),sz,'MarkerEdgeColor',[.5 .5 .5],...
+                  'MarkerFaceColor',[.2 .2 .2]); grid on;hold on;
+              
+    set(gcf,'Position',[700,50,FigureWidth,FigureWidth*Proportion]) 
+    xlabel('In-Phase')
+    ylabel('Quadrature')
+    xlim([-4,4])
+    ylim([-4,4])
+    title(['Constellation of the received signal. SNR = ',num2str(EbN0dB),'dB'])
+    pause(2)
+    if(EbN0dB ~= finalSNR)
+    delete(figure(1))
+    end
+end
