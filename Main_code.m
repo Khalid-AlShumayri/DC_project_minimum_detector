@@ -1,6 +1,6 @@
 % بسم الله الرحمن الرحيم  
 
-% Course Project
+% EE417 Course Project
 %%
 clear all;
 close all;
@@ -37,11 +37,13 @@ s7 = [-d1/2, d1/2];  % 011
 s8 = [d1/2, -d1/2];  % 111
 
 Pe_symbol = [];
-Pe_symbol_thr = [];
+Bound_Q   = [];
+Bound_exp = [];
 Pe_bit = [];
 EbN0dB_s = []; 
 
 %% Loop over the different SNR
+
 for EbN0dB = 0:2:12         % 'Part a' 
 
     EbN0 = 10^(EbN0dB/10);
@@ -118,7 +120,7 @@ for EbN0dB = 0:2:12         % 'Part a'
             e8 = sum( (Rec(i,:) - s8).*(Rec(i,:) - s8) ); 
             
             DE = [e1, e2, e3, e4, e5, e6, e7, e8];
-            [M,I] = min(DE);
+            [~,I] = min(DE);
            
             if (I == 1) % 100
                 temp2 = s1;
@@ -187,40 +189,82 @@ for EbN0dB = 0:2:12         % 'Part a'
     Pe_symbol = [Pe_symbol;Pe_s];
 
     % Theortical bound
-    Pe_symbol_thr = [Pe_symbol_thr;(8-1)*exp( -d1^2/(4*N0) )/( d1*sqrt(pi/N0) )];
+    Bound_Q = [Bound_Q;(M-1)*qfunc(d1/sqrt(2*N0))];
+    Bound_exp = [Bound_exp;(M-1)*exp( -d1^2/(4*N0) )/( d1*sqrt(pi/N0) )];
 end
 
 
 %% Plotting 
 figure(2)
 
-h1 = semilogy(EbN0dB_s,Pe_symbol_thr,'marker','x','LineWidth',lin_width); hold on
-h2 = semilogy(EbN0dB_s,Pe_symbol,'o','LineWidth',lin_width); hold on
-h3 = semilogy(EbN0dB_s,Pe_bit,'x','LineWidth',lin_width);
+h1 = semilogy(EbN0dB_s,Bound_exp,'-x','LineWidth',lin_width); hold on
+h2 = semilogy(EbN0dB_s,Bound_Q,'-*','LineWidth',lin_width); hold on
+h3 = semilogy(EbN0dB_s,Pe_symbol,'o','LineWidth',lin_width); hold on
+h4 = semilogy(EbN0dB_s,Pe_bit,'x','LineWidth',lin_width);
 
-h1.Color = [0.7,0.1,0.1];
-h2.Color = [0.1,0.1,0.8];
-h3.Color = [0.2,0.7,0.1];
+h1.Color = [.7,.1,.1];
+h2.Color = [.1,.6,.1];
+h3.Color = [.1,.1,.8];
+h4.Color = [.1,.1,.1];
 
 xlabel ('Eb/N0 [dB]')
 ylabel ('Probability of Error, P_e')
-legend('Bound for SER','SER','BER')
+legend('SER bound (exp)','SER bound (qfunc)','SER','BER')
 title('Error curve for 8-QAM')
 grid on
 
+%% Plotting the constellation
 sz = 40;
 figure(3)
 H1 = scatter(sig_o(:,1),sig_o(:,2),sz,'MarkerEdgeColor',[.4 .4 0],...
-              'MarkerFaceColor',[1 1 0]); grid on;
+              'MarkerFaceColor',[1 1 0]); grid on; hold on;
+
+% Drawing the decision regions      
+
+plot([-4,4],[0,0],'--k','LineWidth',lin_width)   
+plot([0,0],[-4,4],'--k','LineWidth',lin_width)
+
+plot([-4,-1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
+plot([-4,-1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
+
+plot([4,1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
+plot([4,1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
+
+plot([-1.7071,-1.7071],[-4,-1.7071],'--k','LineWidth',lin_width) 
+plot([1.7071,1.7071],[-4,-1.7071],'--k','LineWidth',lin_width) 
+
+plot([-1.7071,-1.7071],[4,1.7071],'--k','LineWidth',lin_width) 
+plot([1.7071,1.7071],[4,1.7071],'--k','LineWidth',lin_width) 
+
 xlabel('In-Phase')
 ylabel('Quadrature')
 xlim([-4,4])
 ylim([-4,4])
 title('Constellation of original signal')
+hold off
 
+%% Constellation of the received signal
 figure(4)
 H2 = scatter(Rec(:,1),Rec(:,2),sz,'MarkerEdgeColor',[.4 .4 0],...
-              'MarkerFaceColor',[1 1 0]); grid on;
+              'MarkerFaceColor',[1 1 0]); grid on; hold on;
+
+% Drawing the decision regions      
+plot([-4,4],[0,0],'--k','LineWidth',lin_width)   
+plot([0,0],[-4,4],'--k','LineWidth',lin_width)
+
+plot([-4,-1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
+plot([-4,-1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
+
+plot([4,1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
+plot([4,1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
+
+plot([-1.7071,-1.7071],[-4,-1.7071],'--k','LineWidth',lin_width) 
+plot([1.7071,1.7071],[-4,-1.7071],'--k','LineWidth',lin_width) 
+
+plot([-1.7071,-1.7071],[4,1.7071],'--k','LineWidth',lin_width) 
+plot([1.7071,1.7071],[4,1.7071],'--k','LineWidth',lin_width) 
+             
+
 xlabel('In-Phase')
 ylabel('Quadrature')
 xlim([-4,4])
