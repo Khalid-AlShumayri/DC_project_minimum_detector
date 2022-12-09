@@ -43,8 +43,8 @@ Pe_bit = [];
 EbN0dB_s = []; 
 
 %% Loop over the different SNR
-
-for EbN0dB = 0:2:12         % 'Part a' 
+finalSNR = 12;
+for EbN0dB = 6:2:finalSNR         % 'Part a' 
 
     EbN0 = 10^(EbN0dB/10);
     EsN0 = 3*EbN0;
@@ -90,7 +90,6 @@ for EbN0dB = 0:2:12         % 'Part a'
                 end
         end
         
-         
         % Calculating the energy per symbol & Calculate the noise variance 
 
         %Avg energy per symbol
@@ -164,22 +163,6 @@ for EbN0dB = 0:2:12         % 'Part a'
         Symbol_error = Symbol_error + nnz(sig_r - sig_o);
         T = T+1;
 
- %%%%%%%%%%%       
-%         figure(1)
-%         handle1 = scatter(Rec(:,1),Rec(:,2),30,'MarkerEdgeColor',[.4 .4 0],...
-%                       'MarkerFaceColor',[1 1 0]); grid on;
-%         xlabel('In-Phase')
-%         ylabel('Quadrature')
-%         xlim([-5,5])
-%         ylim([-5,5])
-%         set(gcf,'Position',[700,50,FigureWidth,FigureWidth*Proportion]) 
-%         title(['Constellation of received signal. ',num2str(EbN0dB),'dB'])    
-
-% you can pause here and see the constellation at different SNR 
-% It is nice to watch!!
-
-%         delete(figure(1))
-%%%%%%%%%%%%
     end
 %     to find the probability of error
     Pe_s = Symbol_error/(T*Num_of_Symbols);
@@ -218,9 +201,7 @@ sz = 40;
 figure(3)
 H1 = scatter(sig_o(:,1),sig_o(:,2),sz,'MarkerEdgeColor',[.4 .4 0],...
               'MarkerFaceColor',[1 1 0]); grid on; hold on;
-
 % Drawing the decision regions      
-
 plot([-4,4],[0,0],'--k','LineWidth',lin_width)   
 plot([0,0],[-4,4],'--k','LineWidth',lin_width)
 
@@ -230,11 +211,13 @@ plot([-4,-1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width)
 plot([4,1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
 plot([4,1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
 
-plot([-1.7071,-1.7071],[-4,-1.7071],'--k','LineWidth',lin_width) 
-plot([1.7071,1.7071],[-4,-1.7071],'--k','LineWidth',lin_width) 
+plot([-1.7071,-1.7071],[-2.41,-1.7071],'--k','LineWidth',lin_width) 
+plot([1.7071,1.7071],[-2.41,-1.7071],'--k','LineWidth',lin_width) 
+plot([-1.7071,1.7071],[-2.41,-2.41],'--k','LineWidth',lin_width)
 
-plot([-1.7071,-1.7071],[4,1.7071],'--k','LineWidth',lin_width) 
-plot([1.7071,1.7071],[4,1.7071],'--k','LineWidth',lin_width) 
+plot([-1.7071,-1.7071],[1.7071,2.41],'--k','LineWidth',lin_width) 
+plot([1.7071,1.7071],[1.7071,2.41],'--k','LineWidth',lin_width) 
+plot([-1.7071,1.7071],[2.41,2.41],'--k','LineWidth',lin_width) 
 
 xlabel('In-Phase')
 ylabel('Quadrature')

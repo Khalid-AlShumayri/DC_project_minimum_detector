@@ -24,7 +24,7 @@ res = 600;
 
 %%
 % Mapping the generated bits to construct the given constellation 'Part c'
-d1 = 1;                    % the value of d1 is not final yet
+d1 = 2;                    % the value of d1 is not final yet
 d2 = d1*(sqrt(2)+1);       % d2 depends on d1 
 
 s1 = [d2/2, d2/2];  % 100
@@ -37,19 +37,23 @@ s7 = [-d1/2, d1/2];  % 011
 s8 = [d1/2, -d1/2];  % 111
 
 %% Loop over the different SNR
-finalSNR = 16;
-for EbN0dB = 0:2:finalSNR         % 'Part a' 
+finalSNR = 12;
+for EbN0dB = 8:2:finalSNR         % 'Part a' 
 
     EbN0 = 10^(EbN0dB/10);
     EsN0 = 3*EbN0;
-    Bit_error = 0;
-    Symbol_error = 0;
-    
+%     Bit_error = 0;
     sig_o = [];             % Original signal
-    %%%
+
+    %%% Received symbols
     Si_1 = [];  Si_2 = [];  Si_3 = [];  Si_4 = [];
     Si_5 = [];  Si_6 = [];  Si_7 = [];  Si_8 = [];
+    %%% Counter for indesis
+    counter_1 = []; counter_2 = []; counter_3 = []; counter_4 = [];
+    counter_5 = []; counter_6 = []; counter_7 = []; counter_8 = [];
     %%%
+
+    Rec = [];
     K = rand(1,Num_of_bits);
     Bit_o = round(K);
 
@@ -57,38 +61,47 @@ for EbN0dB = 0:2:finalSNR         % 'Part a'
     for i = 1:1:Num_of_Symbols
     %%
         symbol = [Bit_o(1+3*(i-1)), Bit_o(2+3*(i-1)), Bit_o(3+3*(i-1))];
+
         % Gray coding
-        if (symbol == [0,0,0])
+        if (symbol == [0,0,0])  % 000
             sig_o = [sig_o;s2];
             Si_2 = [Si_2;s2];
+            counter_2 = [counter_2;i];
 
-        elseif symbol == [0,0,1]
+        elseif symbol == [0,0,1]% 001
             sig_o = [sig_o;s3];
             Si_3 = [Si_3;s3];
+            counter_3 = [counter_3;i];
 
-        elseif symbol == [0,1,0]
+        elseif symbol == [0,1,0]% 010
             sig_o = [sig_o;s6];
             Si_6 = [Si_6;s6];
+            counter_6 = [counter_6;i];
 
-        elseif symbol == [0,1,1]
+        elseif symbol == [0,1,1]% 011
             sig_o = [sig_o;s7];
             Si_7 = [Si_7;s7];
+            counter_7 = [counter_7;i];
 
-        elseif symbol == [1,0,0]
+        elseif symbol == [1,0,0]% 100
             sig_o = [sig_o;s1];
             Si_1 = [Si_1;s1];
+            counter_1 = [counter_1;i];
 
-        elseif symbol == [1,0,1]
+        elseif symbol == [1,0,1]% 101
             sig_o = [sig_o;s4];
             Si_4 = [Si_4;s4];
+            counter_4 = [counter_4;i];
 
-        elseif symbol == [1,1,0]
+        elseif symbol == [1,1,0]% 110
             sig_o = [sig_o;s5];
             Si_5 = [Si_5;s5];
+            counter_5 = [counter_5;i];
 
-        elseif symbol == [1,1,1]
+        elseif symbol == [1,1,1]% 111
             sig_o = [sig_o;s8];
             Si_8 = [Si_8;s8];
+            counter_8 = [counter_8;i];
 
         end
     end
@@ -101,9 +114,9 @@ for EbN0dB = 0:2:finalSNR         % 'Part a'
     % as EsN0 increase N0 decrease
     N0 = Es/EsN0;    
     Noise = sqrt(N0/2).*randn(size(sig_o));
-
-    % The received signal
+    
     Rec = sig_o + Noise;
+    % The received symbols
     Si_1 =Si_1+ Noise(randperm(size(Si_1,1)),:);  % adding noise to each class of symbols
     Si_2 =Si_2+ Noise(randperm(size(Si_2,1)),:);
     Si_3 =Si_3+ Noise(randperm(size(Si_3,1)),:);
@@ -112,8 +125,10 @@ for EbN0dB = 0:2:finalSNR         % 'Part a'
     Si_6 =Si_6+ Noise(randperm(size(Si_6,1)),:);
     Si_7 =Si_7+ Noise(randperm(size(Si_7,1)),:);
     Si_8 =Si_8+ Noise(randperm(size(Si_8,1)),:);
+    
+    %%
 
-    sig_r = []; % Received signal 
+    sig_d = []; % Decoded signal 
     Bit_r = []; % Received bits
 
     % Applying MDs
@@ -122,7 +137,7 @@ for EbN0dB = 0:2:finalSNR         % 'Part a'
     %%
         e1 = sum( (Rec(i,:) - s1).*(Rec(i,:) - s1) ); % ||Rec(i) - s1||^2
         e2 = sum( (Rec(i,:) - s2).*(Rec(i,:) - s2) ); % taking the
-        e3 = sum( (Rec(i,:) - s3).*(Rec(i,:) - s3) ); % difference than 
+        e3 = sum( (Rec(i,:) - s3).*(Rec(i,:) - s3) ); % difference then 
         e4 = sum( (Rec(i,:) - s4).*(Rec(i,:) - s4) ); % finding the energy
         e5 = sum( (Rec(i,:) - s5).*(Rec(i,:) - s5) ); % of the error signal
         e6 = sum( (Rec(i,:) - s6).*(Rec(i,:) - s6) );
@@ -134,44 +149,44 @@ for EbN0dB = 0:2:finalSNR         % 'Part a'
 
         if (I == 1) % 100
             temp2 = s1;
-            Bit1 = 1; Bit2 = 0; Bit3 = 0;
+            Bit1 = [1,0,0];
 
         elseif (I == 2) % 000
             temp2 = s2;
-            Bit1 = 0; Bit2 = 0; Bit3 = 0;
+            Bit1 = [0,0,0];
 
         elseif (I == 3) % 001
             temp2 = s3;
-            Bit1 = 0; Bit2 = 0; Bit3 = 1;
+            Bit1 = [0,0,1];
 
         elseif (I == 4) % 101
             temp2 = s4;
-            Bit1 = 1; Bit2 = 0; Bit3 = 1;
+            Bit1 = [1,0,1];
 
         elseif (I == 5) % 110
             temp2 = s5;
-            Bit1 = 1; Bit2 = 1; Bit3 = 0;
+            Bit1 = [1,1,0];
 
         elseif (I == 6) % 010
             temp2 = s6;
-            Bit1 = 0; Bit2 = 1; Bit3 = 0;
+            Bit1 = [0,1,0];
 
         elseif (I == 7) % 011
             temp2 = s7;
-            Bit1 = 0; Bit2 = 1; Bit3 = 1;
+            Bit1 = [0,1,1];
 
         elseif (I == 8) % 111
             temp2 = s8;
-            Bit1 = 1; Bit2 = 1; Bit3 = 1;
+            Bit1 = [1,1,1];
 
         end
 
-        sig_r = [sig_r;temp2]; % accumulating the signals
-        Bit_r = [Bit_r,Bit1,Bit2,Bit3]; % accumulating the Bits
+        sig_d = [sig_d;temp2]; % accumulating the decoded signals
+        Bit_r = [Bit_r,Bit1]; % accumulating the Bits
         q=q+3;
     end
-    Bit_error = Bit_error + sum(xor(Bit_r,Bit_o));
-    Symbol_error = Symbol_error + nnz(sig_r - sig_o);
+    Bit_error = sum(xor(Bit_r,Bit_o));
+    Symbol_error = nnz(sig_d - sig_o);
 
     figure(1)
     sz = 40;
@@ -191,15 +206,36 @@ for EbN0dB = 0:2:finalSNR         % 'Part a'
                   'MarkerFaceColor',[.7 .7 .7]); grid on;hold on;          
     scatter(Si_8(:,1),Si_8(:,2),sz,'MarkerEdgeColor',[.5 .5 .5],...
                   'MarkerFaceColor',[.2 .2 .2]); grid on;hold on;
-              
+    
+    % Drawing the decision regions      
+    plot([-4,4],[0,0],'--k','LineWidth',lin_width)   
+    plot([0,0],[-4,4],'--k','LineWidth',lin_width)
+    
+    plot([-4,-1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
+    plot([-4,-1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
+    
+    plot([4,1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
+    plot([4,1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
+    
+    plot([-1.7071,-1.7071],[-2.41,-1.7071],'--k','LineWidth',lin_width) 
+    plot([1.7071,1.7071],[-2.41,-1.7071],'--k','LineWidth',lin_width) 
+    plot([-1.7071,1.7071],[-2.41,-2.41],'--k','LineWidth',lin_width)
+    
+    plot([-1.7071,-1.7071],[1.7071,2.41],'--k','LineWidth',lin_width) 
+    plot([1.7071,1.7071],[1.7071,2.41],'--k','LineWidth',lin_width) 
+    plot([-1.7071,1.7071],[2.41,2.41],'--k','LineWidth',lin_width) 
+    hold off
+
     set(gcf,'Position',[700,50,FigureWidth,FigureWidth*Proportion]) 
     xlabel('In-Phase')
     ylabel('Quadrature')
     xlim([-4,4])
     ylim([-4,4])
-    title(['Constellation of the received signal. SNR = ',num2str(EbN0dB),'dB'])
-    pause(2)
+    title(['Constellation of the received signal. SNR = ',num2str(EbN0dB),'dB. BER= ',num2str(Bit_error)])
+%     drawnow
+    pause(5)
     if(EbN0dB ~= finalSNR)
     delete(figure(1))
     end
+
 end
