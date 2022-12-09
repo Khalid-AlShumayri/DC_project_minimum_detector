@@ -202,28 +202,19 @@ figure(3)
 H1 = scatter(sig_o(:,1),sig_o(:,2),sz,'MarkerEdgeColor',[.4 .4 0],...
               'MarkerFaceColor',[1 1 0]); grid on; hold on;
 % Drawing the decision regions      
-plot([-4,4],[0,0],'--k','LineWidth',lin_width)   
+plot([0,3.4142],[3.4142,0],'--k','LineWidth',lin_width)
+plot([0,-3.4142],[3.4142,0],'--k','LineWidth',lin_width)
+plot([0,3.4142],[-3.4142,0],'--k','LineWidth',lin_width)
+plot([0,-3.4142],[-3.4142,0],'--k','LineWidth',lin_width)
+
 plot([0,0],[-4,4],'--k','LineWidth',lin_width)
-
-plot([-4,-1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
-plot([-4,-1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
-
-plot([4,1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
-plot([4,1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
-
-plot([-1.7071,-1.7071],[-2.41,-1.7071],'--k','LineWidth',lin_width) 
-plot([1.7071,1.7071],[-2.41,-1.7071],'--k','LineWidth',lin_width) 
-plot([-1.7071,1.7071],[-2.41,-2.41],'--k','LineWidth',lin_width)
-
-plot([-1.7071,-1.7071],[1.7071,2.41],'--k','LineWidth',lin_width) 
-plot([1.7071,1.7071],[1.7071,2.41],'--k','LineWidth',lin_width) 
-plot([-1.7071,1.7071],[2.41,2.41],'--k','LineWidth',lin_width) 
+plot([-4,4],[0,0],'--k','LineWidth',lin_width)
 
 xlabel('In-Phase')
 ylabel('Quadrature')
 xlim([-4,4])
 ylim([-4,4])
-title('Constellation of original signal')
+title('Constellation diagram for 8-QAM')
 hold off
 
 %% Constellation of the received signal
@@ -232,26 +223,20 @@ H2 = scatter(Rec(:,1),Rec(:,2),sz,'MarkerEdgeColor',[.4 .4 0],...
               'MarkerFaceColor',[1 1 0]); grid on; hold on;
 
 % Drawing the decision regions      
-plot([-4,4],[0,0],'--k','LineWidth',lin_width)   
+plot([0,3.4142],[3.4142,0],'--k','LineWidth',lin_width)
+plot([0,-3.4142],[3.4142,0],'--k','LineWidth',lin_width)
+plot([0,3.4142],[-3.4142,0],'--k','LineWidth',lin_width)
+plot([0,-3.4142],[-3.4142,0],'--k','LineWidth',lin_width)
+
 plot([0,0],[-4,4],'--k','LineWidth',lin_width)
-
-plot([-4,-1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
-plot([-4,-1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
-
-plot([4,1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
-plot([4,1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
-
-plot([-1.7071,-1.7071],[-4,-1.7071],'--k','LineWidth',lin_width) 
-plot([1.7071,1.7071],[-4,-1.7071],'--k','LineWidth',lin_width) 
-
-plot([-1.7071,-1.7071],[4,1.7071],'--k','LineWidth',lin_width) 
-plot([1.7071,1.7071],[4,1.7071],'--k','LineWidth',lin_width) 
-             
+plot([-4,4],[0,0],'--k','LineWidth',lin_width)
 
 xlabel('In-Phase')
 ylabel('Quadrature')
 xlim([-4,4])
 ylim([-4,4])
+title('Constellation diagram for 8-QAM')
+hold off
 title(['Constellation of received signal. ',num2str(EbN0dB),'dB'])
 
 

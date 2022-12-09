@@ -37,7 +37,7 @@ s7 = [-d1/2, d1/2];  % 011
 s8 = [d1/2, -d1/2];  % 111
 
 %% Loop over the different SNR
-finalSNR = 12;
+finalSNR = 10;
 for EbN0dB = 8:2:finalSNR         % 'Part a' 
 
     EbN0 = 10^(EbN0dB/10);
@@ -208,22 +208,13 @@ for EbN0dB = 8:2:finalSNR         % 'Part a'
                   'MarkerFaceColor',[.2 .2 .2]); grid on;hold on;
     
     % Drawing the decision regions      
-    plot([-4,4],[0,0],'--k','LineWidth',lin_width)   
+    plot([0,3.4142],[3.4142,0],'--k','LineWidth',lin_width)
+    plot([0,-3.4142],[3.4142,0],'--k','LineWidth',lin_width)
+    plot([0,3.4142],[-3.4142,0],'--k','LineWidth',lin_width)
+    plot([0,-3.4142],[-3.4142,0],'--k','LineWidth',lin_width)
+    
     plot([0,0],[-4,4],'--k','LineWidth',lin_width)
-    
-    plot([-4,-1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
-    plot([-4,-1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
-    
-    plot([4,1.7071],[-1.7071,-1.7071],'--k','LineWidth',lin_width) 
-    plot([4,1.7071],[1.7071,1.7071],'--k','LineWidth',lin_width) 
-    
-    plot([-1.7071,-1.7071],[-2.41,-1.7071],'--k','LineWidth',lin_width) 
-    plot([1.7071,1.7071],[-2.41,-1.7071],'--k','LineWidth',lin_width) 
-    plot([-1.7071,1.7071],[-2.41,-2.41],'--k','LineWidth',lin_width)
-    
-    plot([-1.7071,-1.7071],[1.7071,2.41],'--k','LineWidth',lin_width) 
-    plot([1.7071,1.7071],[1.7071,2.41],'--k','LineWidth',lin_width) 
-    plot([-1.7071,1.7071],[2.41,2.41],'--k','LineWidth',lin_width) 
+    plot([-4,4],[0,0],'--k','LineWidth',lin_width)
     hold off
 
     set(gcf,'Position',[700,50,FigureWidth,FigureWidth*Proportion]) 
