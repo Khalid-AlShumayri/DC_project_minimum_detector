@@ -1,7 +1,7 @@
 # QAM modulation
 
 ## Introduction
-Quadrature amplitude modulation QAM combines the merits of amplitude and phase modulation (i.e., AM and PM). It increases the bandwidth efficiency by utilizing the amplitude and phase components to provide modulation. In this project, we simulated an 8-QAM signaling scheme in the presence of additive white-gaussian noise (AWGN) given the constellation diagram below. The simulated scheme was tested with different SNR values to observe the probability of error using minimum distance detector (MD) for signal decoding. In addition, the theortical error bounds were derived in and compared with the simulation results.
+Quadrature amplitude modulation QAM combines the merits of amplitude and phase modulation (i.e., AM and PM). It increases the bandwidth efficiency by utilizing the amplitude and phase components to modulate the message signal. In this project, we simulated an 8-QAM signaling scheme in the presence of additive white-gaussian noise (AWGN) given the constellation diagram below. The simulated scheme was tested with different SNR values to observe the probability of error using minimum distance detector (MD) for signal decoding. In addition, the theortical error bounds were derived and compared with the simulation results.
 
 ![Diagram](https://github.com/Khalid-AlShumayri/EE417_Project/assets/53300785/c761a1bd-ca9f-4a84-91c3-c188bf39338b)
 
