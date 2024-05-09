@@ -6,7 +6,7 @@ Quadrature amplitude modulation QAM combines the merits of amplitude and phase m
 ![Diagram](https://github.com/Khalid-AlShumayri/EE417_Project/assets/53300785/c761a1bd-ca9f-4a84-91c3-c188bf39338b)
 
 
-## The results
+## Results
 
 The picture below shows how the constellation diagram is divided based on the minimum distance detector in odrder to decode the received siganl.
 
